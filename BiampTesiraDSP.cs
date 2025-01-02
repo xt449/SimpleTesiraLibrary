@@ -47,11 +47,6 @@ namespace SimpleTesiraLibrary
 			commandQueue = new AsyncQueue<(string, Action<string>?)>(ProcessCommand);
 		}
 
-		public void Connect()
-		{
-			connection.ConnectAsync();
-		}
-
 		public IMuteComponent CreateMuteComponent(string instanceTag)
 		{
 			return new MuteComponent(this, instanceTag);
@@ -59,12 +54,17 @@ namespace SimpleTesiraLibrary
 
 		public ILevelComponent CreateLevelComponent(string instanceTag)
 		{
-			return new LevelComponent(this, instanceTag); ;
+			return new LevelComponent(this, instanceTag);
 		}
 
-		public ITIControlStatusComponent CreateDialerComponent(string instanceTag)
+		public ITIControlStatusComponent CreateTIControlStatusComponent(string instanceTag)
 		{
-			return new TIControlStatusComponent(this, instanceTag); ;
+			return new TIControlStatusComponent(this, instanceTag);
+		}
+
+		public IVoIPControlStatusComponent CreateVoIPControlStatusComponent(string instanceTag)
+		{
+			return new VoIPControlStatusComponent(this, instanceTag);
 		}
 
 		public void RecallPreset(string presetName)
