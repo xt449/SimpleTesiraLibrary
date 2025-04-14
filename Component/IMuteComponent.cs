@@ -1,13 +1,12 @@
-﻿using System;
+﻿namespace SimpleTesiraLibrary.Component;
 
-namespace SimpleTesiraLibrary.Component
+using System;
+
+public interface IMuteComponent
 {
-	public interface IMuteComponent
-	{
-		bool IsMuted { get; }
+	bool IsMuted { get; }
 
-		event EventHandler<bool> MutedStateChanged;
+	event EventHandler<bool> MutedStateChanged;
 
-		void SetMuted(bool state);
-	}
+	void SetMuted(bool state);
 }

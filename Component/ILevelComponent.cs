@@ -1,21 +1,20 @@
-﻿using System;
+﻿namespace SimpleTesiraLibrary.Component;
 
-namespace SimpleTesiraLibrary.Component
+using System;
+
+public interface ILevelComponent : IMuteComponent
 {
-	public interface ILevelComponent : IMuteComponent
+	float Level { get; }
+
+	float LevelMin { get; }
+	float LevelMax { get; }
+
+	event EventHandler<float> LevelChanged;
+
+	void SetLevel(float level);
+
+	virtual void SetLevelRatio(float levelRatio)
 	{
-		float Level { get; }
-
-		float LevelMin { get; }
-		float LevelMax { get; }
-
-		event EventHandler<float> LevelChanged;
-
-		void SetLevel(float level);
-
-		virtual void SetLevelRatio(float levelRatio)
-		{
-			SetLevel((levelRatio * (LevelMax - LevelMin)) + LevelMin);
-		}
+		SetLevel((levelRatio * (LevelMax - LevelMin)) + LevelMin);
 	}
 }

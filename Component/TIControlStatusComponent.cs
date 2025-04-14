@@ -1,60 +1,59 @@
-﻿using System;
+﻿namespace SimpleTesiraLibrary.Component;
 
-namespace SimpleTesiraLibrary.Component
+using System;
+
+internal class TIControlStatusComponent : ITIControlStatusComponent
 {
-	internal class TIControlStatusComponent : ITIControlStatusComponent
+	private readonly BiampTesiraDSP tesira;
+	private readonly string instanceTag;
+
+	private readonly string callStatePublishToken;
+
+	public string LastNumber { get; private set; }
+
+	public TIControlStatusComponent(BiampTesiraDSP tesira, string instanceTag)
 	{
-		private readonly BiampTesiraDSP tesira;
-		private readonly string instanceTag;
+		this.tesira = tesira;
+		this.instanceTag = instanceTag;
 
-		private readonly string callStatePublishToken;
+		callStatePublishToken = $"{instanceTag}#CALLSTATE";
 
-		public string LastNumber { get; private set; }
+		tesira.SubscribeToPublishToken(callStatePublishToken, HandleCallStatePublishToken);
 
-		public TIControlStatusComponent(BiampTesiraDSP tesira, string instanceTag)
-		{
-			this.tesira = tesira;
-			this.instanceTag = instanceTag;
+		tesira.Connected += Initialize;
 
-			callStatePublishToken = $"{instanceTag}#CALLSTATE";
+		LastNumber = "";
+	}
 
-			tesira.SubscribeToPublishToken(callStatePublishToken, HandleCallStatePublishToken);
+	public void Dial(string number)
+	{
+		tesira.QueueCommand(TesiraCommands.TIControlStatus.Dial(instanceTag, number), null);
+	}
 
-			tesira.Connected += Initialize;
+	public void Answer()
+	{
+		tesira.QueueCommand(TesiraCommands.TIControlStatus.Answer(instanceTag), null);
+	}
 
-			LastNumber = "";
-		}
+	public void End()
+	{
+		tesira.QueueCommand(TesiraCommands.TIControlStatus.End(instanceTag), null);
+	}
 
-		public void Dial(string number)
-		{
-			tesira.QueueCommand(TesiraCommands.TIControlStatus.Dial(instanceTag, number), null);
-		}
+	public void DTMF(char digit)
+	{
+		tesira.QueueCommand(TesiraCommands.TIControlStatus.DTMF(instanceTag, digit), null);
+	}
 
-		public void Answer()
-		{
-			tesira.QueueCommand(TesiraCommands.TIControlStatus.Answer(instanceTag), null);
-		}
+	// private
 
-		public void End()
-		{
-			tesira.QueueCommand(TesiraCommands.TIControlStatus.End(instanceTag), null);
-		}
+	private void Initialize(object? _, EventArgs e)
+	{
+		tesira.QueueCommand(TesiraCommands.TIControlStatus.SubscribeCallState(instanceTag, callStatePublishToken), null);
+	}
 
-		public void DTMF(char digit)
-		{
-			tesira.QueueCommand(TesiraCommands.TIControlStatus.DTMF(instanceTag, digit), null);
-		}
-
-		// private
-
-		private void Initialize(object? _, EventArgs e)
-		{
-			tesira.QueueCommand(TesiraCommands.TIControlStatus.SubscribeCallState(instanceTag, callStatePublishToken), null);
-		}
-
-		private void HandleCallStatePublishToken(string obj)
-		{
-			throw new NotImplementedException();
-		}
+	private void HandleCallStatePublishToken(string obj)
+	{
+		throw new NotImplementedException();
 	}
 }

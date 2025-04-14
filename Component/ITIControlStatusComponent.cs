@@ -1,16 +1,15 @@
-﻿namespace SimpleTesiraLibrary.Component
+﻿namespace SimpleTesiraLibrary.Component;
+
+public interface ITIControlStatusComponent
 {
-	public interface ITIControlStatusComponent
-	{
-		string LastNumber { get; }
+	string LastNumber { get; }
 
-		void Dial(string number);
+	void Dial(string number);
 
-		void Answer();
+	void Answer();
 
-		void End();
+	void End();
 
-		/// <param name="digit">[0-9*#]</param>
-		void DTMF(char digit);
-	}
+	/// <param name="digit">[0-9*#]</param>
+	void DTMF(char digit);
 }

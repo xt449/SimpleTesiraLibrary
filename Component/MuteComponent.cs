@@ -1,50 +1,49 @@
-﻿using System;
+﻿namespace SimpleTesiraLibrary.Component;
 
-namespace SimpleTesiraLibrary.Component
+using System;
+
+internal class MuteComponent : IMuteComponent
 {
-	internal class MuteComponent : IMuteComponent
+	private const int CHANNEL = 1;
+
+	private readonly BiampTesiraDSP tesira;
+	private readonly string instanceTag;
+
+	private readonly string mutePublishToken;
+
+	public bool IsMuted { get; private set; }
+
+	public event EventHandler<bool>? MutedStateChanged;
+
+	public MuteComponent(BiampTesiraDSP tesira, string instanceTag)
 	{
-		private const int CHANNEL = 1;
+		this.tesira = tesira;
+		this.instanceTag = instanceTag;
 
-		private readonly BiampTesiraDSP tesira;
-		private readonly string instanceTag;
+		mutePublishToken = $"{instanceTag}#MUTE";
 
-		private readonly string mutePublishToken;
+		tesira.SubscribeToPublishToken(mutePublishToken, HandleMutePublishToken);
 
-		public bool IsMuted { get; private set; }
+		tesira.Connected += Initialize;
+	}
 
-		public event EventHandler<bool>? MutedStateChanged;
+	public void SetMuted(bool state)
+	{
+		tesira.QueueCommand(TesiraCommands.Mute.SetMute(instanceTag, CHANNEL, state), null);
+	}
 
-		public MuteComponent(BiampTesiraDSP tesira, string instanceTag)
-		{
-			this.tesira = tesira;
-			this.instanceTag = instanceTag;
+	// private
 
-			mutePublishToken = $"{instanceTag}#MUTE";
+	private void Initialize(object? _, EventArgs e)
+	{
+		tesira.QueueCommand(TesiraCommands.Mute.SubscribeMute(instanceTag, CHANNEL, mutePublishToken), null);
+	}
 
-			tesira.SubscribeToPublishToken(mutePublishToken, HandleMutePublishToken);
+	private void HandleMutePublishToken(string value)
+	{
+		IsMuted = bool.Parse(value);
 
-			tesira.Connected += Initialize;
-		}
-
-		public void SetMuted(bool state)
-		{
-			tesira.QueueCommand(TesiraCommands.Mute.SetMute(instanceTag, CHANNEL, state), null);
-		}
-
-		// private
-
-		private void Initialize(object? _, EventArgs e)
-		{
-			tesira.QueueCommand(TesiraCommands.Mute.SubscribeMute(instanceTag, CHANNEL, mutePublishToken), null);
-		}
-
-		private void HandleMutePublishToken(string value)
-		{
-			IsMuted = bool.Parse(value);
-
-			// Trigger event
-			MutedStateChanged?.Invoke(this, IsMuted);
-		}
+		// Trigger event
+		MutedStateChanged?.Invoke(this, IsMuted);
 	}
 }

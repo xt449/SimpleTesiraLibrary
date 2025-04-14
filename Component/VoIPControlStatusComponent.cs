@@ -1,60 +1,59 @@
-﻿using System;
+﻿namespace SimpleTesiraLibrary.Component;
 
-namespace SimpleTesiraLibrary.Component
+using System;
+
+internal class VoIPControlStatusComponent : IVoIPControlStatusComponent
 {
-	internal class VoIPControlStatusComponent : IVoIPControlStatusComponent
+	private readonly BiampTesiraDSP tesira;
+	private readonly string instanceTag;
+
+	private readonly string callStatePublishToken;
+
+	public string LastNumber { get; private set; }
+
+	public VoIPControlStatusComponent(BiampTesiraDSP tesira, string instanceTag)
 	{
-		private readonly BiampTesiraDSP tesira;
-		private readonly string instanceTag;
+		this.tesira = tesira;
+		this.instanceTag = instanceTag;
 
-		private readonly string callStatePublishToken;
+		callStatePublishToken = $"{instanceTag}#CALLSTATE";
 
-		public string LastNumber { get; private set; }
+		tesira.SubscribeToPublishToken(callStatePublishToken, HandleCallStatePublishToken);
 
-		public VoIPControlStatusComponent(BiampTesiraDSP tesira, string instanceTag)
-		{
-			this.tesira = tesira;
-			this.instanceTag = instanceTag;
+		tesira.Connected += Initialize;
 
-			callStatePublishToken = $"{instanceTag}#CALLSTATE";
+		LastNumber = "";
+	}
 
-			tesira.SubscribeToPublishToken(callStatePublishToken, HandleCallStatePublishToken);
+	public void Dial(uint line, uint callAppearance, string number)
+	{
+		tesira.QueueCommand(TesiraCommands.VoIPControlStatus.Dial(instanceTag, line, callAppearance, number), null);
+	}
 
-			tesira.Connected += Initialize;
+	public void Answer(uint line, uint callAppearance)
+	{
+		tesira.QueueCommand(TesiraCommands.VoIPControlStatus.Answer(instanceTag, line, callAppearance), null);
+	}
 
-			LastNumber = "";
-		}
+	public void End(uint line, uint callAppearance)
+	{
+		tesira.QueueCommand(TesiraCommands.VoIPControlStatus.End(instanceTag, line, callAppearance), null);
+	}
 
-		public void Dial(uint line, uint callAppearance, string number)
-		{
-			tesira.QueueCommand(TesiraCommands.VoIPControlStatus.Dial(instanceTag, line, callAppearance, number), null);
-		}
+	public void DTMF(uint line, char digit)
+	{
+		tesira.QueueCommand(TesiraCommands.VoIPControlStatus.DTMF(instanceTag, line, digit), null);
+	}
 
-		public void Answer(uint line, uint callAppearance)
-		{
-			tesira.QueueCommand(TesiraCommands.VoIPControlStatus.Answer(instanceTag, line, callAppearance), null);
-		}
+	// private
 
-		public void End(uint line, uint callAppearance)
-		{
-			tesira.QueueCommand(TesiraCommands.VoIPControlStatus.End(instanceTag, line, callAppearance), null);
-		}
+	private void Initialize(object? _, EventArgs e)
+	{
+		tesira.QueueCommand(TesiraCommands.VoIPControlStatus.SubscribeCallState(instanceTag, callStatePublishToken), null);
+	}
 
-		public void DTMF(uint line, char digit)
-		{
-			tesira.QueueCommand(TesiraCommands.VoIPControlStatus.DTMF(instanceTag, line, digit), null);
-		}
-
-		// private
-
-		private void Initialize(object? _, EventArgs e)
-		{
-			tesira.QueueCommand(TesiraCommands.VoIPControlStatus.SubscribeCallState(instanceTag, callStatePublishToken), null);
-		}
-
-		private void HandleCallStatePublishToken(string obj)
-		{
-			throw new NotImplementedException();
-		}
+	private void HandleCallStatePublishToken(string obj)
+	{
+		throw new NotImplementedException();
 	}
 }
