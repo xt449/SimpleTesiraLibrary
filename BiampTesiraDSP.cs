@@ -10,6 +10,8 @@ namespace SimpleTesiraLibrary;
 
 public class BiampTesiraDSP
 {
+	private static readonly TimeSpan commandResponseTimeout = TimeSpan.FromMilliseconds(5_000);
+
 	private readonly IConnection connection;
 
 	private readonly string username;
@@ -188,17 +190,17 @@ public class BiampTesiraDSP
 		}
 	}
 
-	private void ProcessCommand((string command, Action<string>? okResponseHandler) element)
+	private async Task ProcessCommand((string command, Action<string>? okResponseHandler) element)
 	{
 		// Store completion source and handler
 		lastCommandResponseCompletionSource = new TaskCompletionSource();
 		lastCommandResponseHandler = element.okResponseHandler;
 
 		// Send command with command delimiter
-		connection.SendStringAsync($"{element.command}\n").AsTask().Wait();
+		await connection.SendStringAsync($"{element.command}\n");
 
 		// Wait for completetion source or timeout
-		lastCommandResponseCompletionSource.Task.Wait(5_000);
+		await lastCommandResponseCompletionSource.Task.WaitAsync(commandResponseTimeout);
 
 		// Set completion source and handler to null
 		lastCommandResponseCompletionSource = null;

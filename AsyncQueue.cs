@@ -8,7 +8,7 @@ namespace SimpleTesiraLibrary;
 public class AsyncQueue<T> : IDisposable
 {
 	private readonly ConcurrentQueue<T> backing;
-	private readonly Action<T> elementHandler;
+	private readonly Func<T, Task> elementHandler;
 
 	private readonly SemaphoreSlim semaphore;
 	private readonly CancellationTokenSource cancellationSource;
@@ -17,7 +17,7 @@ public class AsyncQueue<T> : IDisposable
 	private volatile bool disposed = false;
 
 	/// <param name="elementHandler">Fires for each element in the list sequentially, on a shared thread</param>
-	public AsyncQueue(Action<T> elementHandler)
+	public AsyncQueue(Func<T, Task> elementHandler)
 	{
 		backing = new ConcurrentQueue<T>();
 		this.elementHandler = elementHandler;
@@ -80,7 +80,7 @@ public class AsyncQueue<T> : IDisposable
 				// Do action
 				try
 				{
-					elementHandler(element);
+					await elementHandler(element);
 				}
 				catch (Exception)
 				{
