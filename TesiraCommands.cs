@@ -1,6 +1,6 @@
-﻿namespace SimpleTesiraLibrary;
+﻿using System;
 
-using System;
+namespace SimpleTesiraLibrary;
 
 /// <summary>
 /// https://support.biamp.com/Tesira/Control/Tesira_command_string_calculator

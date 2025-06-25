@@ -1,7 +1,7 @@
-﻿namespace SimpleTesiraLibrary.Component;
-
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
+
+namespace SimpleTesiraLibrary.Component;
 
 internal class LevelComponent : ILevelComponent
 {

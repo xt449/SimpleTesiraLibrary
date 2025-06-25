@@ -1,6 +1,6 @@
-﻿namespace SimpleTesiraLibrary.Component;
+﻿using System;
 
-using System;
+namespace SimpleTesiraLibrary.Component;
 
 internal class VoIPControlStatusComponent : IVoIPControlStatusComponent
 {

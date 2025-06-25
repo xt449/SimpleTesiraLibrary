@@ -1,9 +1,9 @@
-﻿namespace SimpleTesiraLibrary;
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+
+namespace SimpleTesiraLibrary;
 
 public class AsyncQueue<T> : IDisposable
 {

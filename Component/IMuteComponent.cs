@@ -1,6 +1,6 @@
-﻿namespace SimpleTesiraLibrary.Component;
+﻿using System;
 
-using System;
+namespace SimpleTesiraLibrary.Component;
 
 public interface IMuteComponent
 {

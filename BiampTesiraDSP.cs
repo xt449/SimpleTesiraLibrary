@@ -1,12 +1,12 @@
-﻿namespace SimpleTesiraLibrary;
-
-using EasyConnections;
+﻿using EasyConnections;
 using SimpleTesiraLibrary.Component;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+namespace SimpleTesiraLibrary;
 
 public class BiampTesiraDSP
 {
